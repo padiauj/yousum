@@ -1,13 +1,11 @@
-# YouSum
+# YouSum 
 
-
-YT-Audio-Transcriber-Summarizer is a powerful command-line tool that automates the process of downloading audio from YouTube videos, transcribing them, and generating summaries. It utilizes state-of-the-art speech recognition and natural language processing technologies to deliver accurate transcriptions and summaries in a user-friendly format.
-
+`yousum` is a powerful command-line tool that automates the process of downloading audio from YouTube videos, transcribing them, and generating summaries. It utilizes state-of-the-art speech recognition and natural language processing technologies to deliver accurate transcriptions and summaries in a user-friendly format.
 
 ## Quickstart
 
-`pip install git+https://github.com/padiauj/yousum.git`
-`yousum [URL]`
+-  `pip install git+https://github.com/padiauj/yousum.git`
+-  `yousum [URL]`
 
 ## Table of Contents
 
@@ -29,7 +27,9 @@ YT-Audio-Transcriber-Summarizer is a powerful command-line tool that automates t
 - Python 3.7 or higher
 - OpenAI key 
 
-Run:
+Just Run:
+
+`pip install git+https://github.com/padiauj/yousum.git`
 
 
 
