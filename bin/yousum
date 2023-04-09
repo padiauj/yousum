@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+import yousum
+import os
+import sys
+from pytube.exceptions import RegexMatchError
+import argparse
+
+if sys.version_info<(3,4,0):
+    sys.stderr.write("You need python 3.4 or later to run this script\n")
+    sys.exit(1)
+
+def cmdline_args():
+    p = argparse.ArgumentParser(description="yousum - summarize youtube videos with GPT and Whisper",
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    
+    p.add_argument("url", help="url of youtube video to summarize")
+
+    return(p.parse_args())
+
+oaikey = os.environ.get("OPENAI_API_KEY")
+if (oaikey is None):
+    print("You need to set OPENAI_API_KEY in your environment to run this script") 
+    oaikey = input("Input your key here:")
+    os.environ.set("OPENAI_API_KEY", oaikey)
+
+args = cmdline_args()
+try:
+    print(yousum.summarize_youtube(args.url))
+except pydub.RegexMatchError as regexc: 
+    print("URL invalid.")
