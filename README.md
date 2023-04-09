@@ -25,13 +25,11 @@
 ### Requirements
 
 - Python 3.7 or higher
-- OpenAI key 
+- OpenAI key, preferably stored in the standard environment variable `OPENAI_API_KEY`
 
 Just Run:
 
 `pip install git+https://github.com/padiauj/yousum.git`
-
-
 
 ## Contributing
 
@@ -39,4 +37,4 @@ We welcome contributions from the community! Please read our [Contributing Guide
 
 ## License
 
-YT-Audio-Transcriber-Summarizer is licensed under the [MIT License](LICENSE.md).
+`yousum` is licensed under the [MIT License](LICENSE.md).

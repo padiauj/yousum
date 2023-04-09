@@ -3,6 +3,7 @@ import os
 
 from setuptools import find_packages, setup
 
+
 def read(*paths, **kwargs):
     content = ""
     with io.open(
@@ -20,6 +21,7 @@ def read_requirements(path):
         if not line.startswith(('"', "#", "-", "git+"))
     ]
 
+
 setup(
     name="YouSum",
     version=read(".", "VERSION"),
@@ -30,5 +32,5 @@ setup(
     author="Umesh Padia",
     packages=find_packages(exclude=["tests", ".github"]),
     install_requires=read_requirements("requirements.txt"),
-    scripts=["bin/yousum"]
+    scripts=["bin/yousum"],
 )
