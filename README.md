@@ -31,9 +31,6 @@ Just Run:
 
 `pip install git+https://github.com/padiauj/yousum.git`
 
-## Contributing
-
-We welcome contributions from the community! Please read our [Contributing Guide](CONTRIBUTING.md) for details on how to get involved.
 
 ## License
 
