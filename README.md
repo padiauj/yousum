@@ -1,6 +1,6 @@
 # YouSum 
 
-`yousum` is a powerful command-line tool that automates the process of downloading audio from YouTube videos, transcribing them, and generating summaries. It utilizes state-of-the-art speech recognition and natural language processing technologies to deliver accurate transcriptions and summaries in a user-friendly format.
+`yousum` is a command-line tool that downloads audio from YouTube videos, transcribes them, and generates summaries. It uses state-of-the-art speech recognition and natural language processing technologies to deliver accurate transcriptions and summaries in a user-friendly format.
 
 ## Quickstart
 

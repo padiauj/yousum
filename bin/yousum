@@ -1,9 +1,20 @@
 #!/usr/bin/env python3
-import yousum
 import os
 import sys
-from pytube.exceptions import RegexMatchError
 import argparse
+from pytube import YouTube
+from io import BytesIO
+import openai
+import tempfile
+import logging
+from pytube.exceptions import RegexMatchError
+
+logger = logging.getLogger(__name__)
+
+logger.setLevel(logging.DEBUG)
+
+SUMMARIZER_SYSTEM_PROMPT = "You are a helpful assistant that summarizes transcriptions."
+SUMMARIZER_PROMPT_PREFIX = "Summarize the following transcription of a Youtube video: "
 
 if sys.version_info < (3, 4, 0):
     sys.stderr.write("You need python 3.4 or later to run this script\n")
@@ -16,20 +27,86 @@ def cmdline_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     p.add_argument("url", help="url of youtube video to summarize")
+    p.add_argument(
+        "-m",
+        "--model",
+        default="gpt-3.5-turbo",
+        help="Model to use for summarization (default: gpt-3.5-turbo)",
+    )
+    p.add_argument(
+        "-p",
+        "--prompt",
+        default=SUMMARIZER_PROMPT_PREFIX,
+        help="Custom summarization prompt",
+    )
+    p.add_argument(
+        "-s",
+        "--sys_prompt",
+        default=SUMMARIZER_SYSTEM_PROMPT,
+        help="Custom system prompt for summarization",
+    )
+    p.add_argument("-o", "--outdir", help="Where to output transcription and summary")
 
     return p.parse_args()
 
 
-oaikey = os.environ.get("OPENAI_API_KEY")
-if oaikey is None:
-    print("You need to set OPENAI_API_KEY in your environment to run this script")
-    oaikey = input(
-        "Input your key here (this will set the environment variable OPENAI_API_KEY):"
+def get_audio(url: str):
+    yt = YouTube(url)
+    video = yt.streams.filter(only_audio=True).first()
+    fp = tempfile.NamedTemporaryFile(suffix=".mp3")
+    video.stream_to_buffer(buffer=fp)
+    fp.seek(0)
+    return fp
+
+
+def transcribe(bio) -> str:
+    return openai.Audio.transcribe("whisper-1", bio)["text"]
+
+
+def summarize(text: str):
+    result = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": SUMMARIZER_SYSTEM_PROMPT,
+            },
+            {
+                "role": "user",
+                "content": SUMMARIZER_PROMPT_PREFIX + text,
+            },
+        ],
     )
-    os.environ.set("OPENAI_API_KEY", oaikey)
+    return result["choices"][0]["message"]["content"]
+
+
+def summarize_youtube(url: str) -> str:
+    logger.debug("Downloading... ")
+    bio = get_audio(url)
+    logger.debug("Transcribing... ")
+    text = transcribe(bio)["text"]
+    logger.debug("Summarizing... ")
+    summary = summarize(text)
+    return summary
+
 
 args = cmdline_args()
 try:
-    print(yousum.summarize_youtube(args.url))
-except pydub.RegexMatchError as regexc:
+    oaikey = os.environ.get("OPENAI_API_KEY")
+    if oaikey is None:
+        print("You need to set OPENAI_API_KEY in your environment to run this script")
+        oaikey = input(
+            "Input your key here (this will set the environment variable OPENAI_API_KEY):"
+        )
+        os.environ.set("OPENAI_API_KEY", oaikey)
+    print(
+        summarize_youtube(
+            args.url,
+            outdir=args.outdir,
+            model=args.model,
+            sys_prompt=args.sys_prompt,
+            prompt=args.prompt,
+        )
+    )
+except RegexMatchError as regexc:
     print("URL invalid.")
